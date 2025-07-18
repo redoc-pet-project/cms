@@ -1,50 +1,54 @@
+import { API_PATH } from "~/common/constant/apiPath";
+import axiosInstance from "~/lib/axiosInstance";
 import { ProxyStatus, ProxyType, type IProxy } from "../types/proxyTypes";
 
-export const getProxies = async (): Promise<IProxy[]> => {
-    return Promise.resolve([
-        {
-            id: '1',
-            ip: '127.0.0.1',
-            port: 8080,
-            type: ProxyType.HTTP,
-            country: 'US',
-            status: ProxyStatus.ACTIVE,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            categories: [
-                {
-                    id: '1',
-                    name: 'Proxy xoay'
-                },
-                {
-                    id: '2',
-                    name: 'Proxy 5G'
-                }
-            ],
-            vendor: {
-                id: '1',
-                name: 'Viettel',
-            }
-        },
-        {
-            id: '2',
-            ip: '127.0.0.2',
-            port: 8081,
-            type: ProxyType.SOCKS,
-            country: 'UK',
-            status: ProxyStatus.ACTIVE,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            categories: [
-                {
-                    id: '3',
-                    name: 'Proxy Hộ gia đình'
-                }
-            ],
-            vendor: {
-                id: '2',
-                name: 'VinaPhone',
-            }
-        }
-    ])
+export interface IGetProxyTye {
+  page: number;
+  limit: number;
+  sortKey?: string;
+  orderBy?: "ASC" | "DESC";
+  search?: string;
 }
+
+export const getProxies = async (
+  props: IGetProxyTye
+): Promise<{
+  data: IProxy[];
+  meta: { page: number; limit: number; total: number; totalPages: number };
+}> => {
+  console.log(axiosInstance.defaults.headers.common["Authorization"]);
+  const response = await axiosInstance.get<IProxy[]>(API_PATH.PROXY.LIST, {
+    params: {
+      page: props.page + 1,
+      limit: props.limit,
+      sortKey: props.sortKey,
+      orderBy: props.orderBy,
+      search: props.search,
+    },
+  });
+
+  if (!response) {
+    return {
+      data: [],
+      meta: {
+        page: 1,
+        limit: 10,
+        total: 0,
+      },
+    };
+  }
+
+  const { page, limit, total } = response.data.meta;
+
+  const totalPages = total / limit > 1 ? total / limit : 1;
+
+  return {
+    data: response.data?.data,
+    meta: {
+      page: page - 1,
+      limit,
+      total,
+      totalPages,
+    },
+  };
+};

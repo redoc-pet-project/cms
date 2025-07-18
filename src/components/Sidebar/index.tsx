@@ -50,6 +50,7 @@ const Sidebar: React.FC = () => {
             <List>
                 {menuItems.map((item) => (
                     <ListItemButton
+                        key={item.path}
                         selected={location.pathname === item.path}
                         onClick={() => navigate(item.path)}
                         sx={{
@@ -57,28 +58,19 @@ const Sidebar: React.FC = () => {
                             mx: 1,
                             my: 0.5,
                             '&.Mui-selected': {
-                                backgroundColor: '#f05a22',
+                                backgroundColor: '#66b5ed',
                                 color: '#fff !important',
-                            },
-                            '&:hover': {
-                                backgroundColor: '#bd5b33',
-                                color: '#ffffff',
-                            },
-                            '&.Mui-selected:hover': {
-                                backgroundColor: '#bd5b33',
-                                color: '#ffffff',
+                                '&:hover': {
+                                    backgroundColor: '#66b5ed',
+                                },
                             },
 
                         }}
                     >
-                        <ListItemIcon sx={{ color: location.pathname === item.path ? '#fff' : '#f05a22', minWidth: 36 }}>
+                        <ListItemIcon sx={{ color: location.pathname === item.path ? '#fff' : '#66b5ed', minWidth: 36 }}>
                             {item.icon}
                         </ListItemIcon>
-                        <Typography variant="subtitle1" color={location.pathname === item.path ? '#fff' : '#f05a22'} sx={{
-                            '&:hover': {
-                                color: '#fff',
-                            },
-                        }}>
+                        <Typography variant="subtitle1" color={location.pathname === item.path ? '#fff' : '#66b5ed'}>
                             {item.label}
                         </Typography>
                     </ListItemButton>
